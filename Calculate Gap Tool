@@ -1,0 +1,141 @@
+############################################################
+## NAME:CalcGap
+## Source Name: CalculateGap.py
+## Version: ArcGIS 10.2.2
+## Author: Environmental Systems Research Institute Inc.
+## Usage: Calculate gap <table or feature class>, <list of fields>, <added fields>}
+## Required Arguments: All
+##
+## Description: This will evaluate the fields in the field list such that for each record
+##              the highest value will be found, new fields for the following will be based
+##              on that:
+##
+##              1.  DomFName (Text)
+##              2.  DomValue     (same as field type)
+##              3.  DomMarg    (DomValue - Value of 2nd place field)
+##              4.  DomPerc      (Percent of total values the dominant value represents)
+##              5.  DomFCnt  (Count of fields with dominant value)
+##              6.  MeanGap
+##              7.  MeanSDGap
+##
+##              Ties will result in the DomFieldName being a concatenation of the tied fields
+##              and the DomFieldCnt being incremented.
+##
+##              After calculating the difference, or gap, between the first highest number and the second, the mean and mean plus one standard deviation of all gaps is calculated.
+##
+##              This tool is designed to accomodate raw integegr or double values (not normalized).
+##
+## Date: October 2014
+#############################################################
+
+###Import required modules
+import sys, os, string, arcpy
+
+if __name__ == "__main__":
+    try:
+        from arcpy import env
+
+        featureClass = arcpy.GetParameterAsText(0)
+        FieldNamesList = arcpy.GetParameterAsText(1)
+        FieldNames = FieldNamesList.split(";")
+
+        # Set environment settings
+        env.overwriteOutput = 1
+
+        # Add fields for output
+        arcpy.AddField_management(featureClass,"DomFName","TEXT","","",64,"Dominant Component") # We need this for sure- "Dominant Field"
+        arcpy.AddField_management(featureClass,"DomFAlias","TEXT","","",100,"Dominant Component Alias") # This will list the alias if available
+        arcpy.AddField_management(featureClass,"DomValue","LONG","","","","Dominant Value")
+        arcpy.AddField_management(featureClass,"DomMarg","DOUBLE","","","","Margin of Dominance") # We need this for sure- "Gap"
+        arcpy.AddField_management(featureClass,"DomPerc","DOUBLE","","","","% Dominance")
+        arcpy.AddField_management(featureClass,"DomPerXP","DOUBLE","","","","Transparency")
+        arcpy.AddField_management(featureClass,"DomFCnt","LONG","","","","# of Ties") # We need this for sure to show that there are x number of ties/balanced fields
+
+
+        #Create dictionary of field names and their alias'
+        List = arcpy.ListFields(featureClass)
+        FieldDict = {}
+        for field in List:
+            fName = str(field.name)
+            FieldDict[fName] = str(field.aliasName)
+
+        #Now we create a cursor to iterate the records of featureClass
+        arcpy.AddMessage("Processing...")
+        rows = arcpy.UpdateCursor(featureClass)
+        for row in rows:
+            vList = [] # Creates an array to later fill with values of each field from FieldNames
+            vIdx = 0 # Starts the index count at 0
+            vTot = 0.0 # Starts the total value of all fields in a particular row
+
+            #Get list of values
+            while vIdx < len(FieldNames): # If there are 3 fields in FieldNames, then this while loop will calculate the vList array with FieldNames[0], [1], and [2]
+                f = FieldNames[vIdx] # This is the name of the field in the array
+                v = row.getValue(f) # Gets the value of the field in a particular row
+                vList.append(v) # Adds that value to the vList array
+                vTot = vTot + v # Adds the value of all the fields in a particular row
+                vIdx = vIdx + 1 # Increases the index count by 1 to tell the while loop when to stop
+
+            #Max Value
+            maxV = max(vList) # Finds the max number/value in the vList array
+            maxIdx = vList.index(maxV) # Finds the index, or location, of where the max number is located
+            if (vTot == 0.0): # If all the values in the row of comparing fields add up to 0, then this changes the variable vTot to 1 so that later on when the script calculates dp and dpX, there will not be a 0 in the denominator
+                vTot = 1
+
+            if vList.count(maxV) < 2:   # Then there is no tie. There is only 1 field with the highest value.
+                mxFld = FieldNames[maxIdx] # Finds the field name of the max value
+                mxFldAlias = FieldDict.get(mxFld)
+                row.setValue("DomFCnt", 0) # Fills this field with the number of ties to 1 (e.g., if 2 number are the same in a list of 3 numbers, there would be 2 ties)
+                row.setValue("DomFName", mxFld) # Fills this field with the predominant field name  # field.aliasname?
+                row.setValue("DomFAlias", mxFldAlias)
+                row.setValue("DomValue", maxV) # Fills this field with the value of the predominant field
+
+                remainList = vList.pop(maxIdx) # Remove the first highest value from the vList array
+                secondPlace = max(vList) # Then find the max value of the revised array to find the second highest value
+                row.setValue("DomMarg",(maxV - secondPlace)) # Fills the gap field or "Margin of Dominance" field with the difference between the highest value and the second highest value
+
+                dp = round(float((maxV/vTot)*100), 3) # Calculates the percent dominance by dividing the maximum value by the total value of all fields
+                dpX = round((100 -  ((float(maxV/vTot))*100)), 3) # Calculates the tranparency by subracting the dominant percent from 100. (e.g., if the highest value is 80% of the total values, then give a transparency of 20. If it is 30% of the total value, give it a higher tranparency of 70)
+
+                ## if we wanted to weight the dp or dpX values, we could do that here by reducing them by a factor
+                ## then increasing that by a weight.  For instance, with population, we could use quartiles to weight
+                ## the factor.  For example if we reduce by 25% and then add based on 0, 8, 17, and 25
+                ##
+                ## dp = round((float(maxV/vTot) * 75.0), 3)
+                ## dpX = round((100 -(float(maxV/vTot) * 75.0)), 3)
+                ## pClass = 0.25
+                ## if pop < 5000 then
+                ##     pClass = 0.165
+                ## if pop < 2000 then
+                ##     pClass = 0.825
+                ## if pop < 500 then
+                ##     pClass = 0
+                ## dp = dp + pClass
+                ## dpX = dpX - pClass
+
+                row.setValue("DomPerc",dp) # Fill the dominant percent field
+                row.setValue("DomPerXP",dpX) # Fill the transparency field
+            else: #There is a tie, which means no dominance, so set it to zero.
+                row.setValue("DomFName", "Tie") # Fill the dominant field with "tie"
+                row.setValue("DomFAlias", "There was more than 1 maximum value")
+                numTies = vList.count(maxV) # Calculate the number of ties by counting the number of max values in the vList array
+                row.setValue("DomFCnt", numTies) # Fills this field with the number of ties
+                row.setValue("DomValue", maxV) # Fills this field with the maximum value
+                row.setValue("DomMarg",0.0) # Fills this field with 0 since there is 0 gap.
+                row.setValue("DomPerXP",100.0) # Fills this field with 100% tranparency since there is not a predominant category
+                row.setValue("DomPerc",0.0) # Fills this field with 0 since there is not a predominant percent
+            rows.updateRow(row) # Updates the row and moves on to the next row
+
+
+
+        # Clean up
+        rows = ""
+        row = ""
+        Crow = ""
+        Crows = ""
+        print "Done"
+
+    except Exception, ErrorDesc:
+        # If an error set output boolean parameter "Error" to True.
+        arcpy.AddError(str(ErrorDesc))
+        row = None
+        rows = None
