@@ -47,28 +47,28 @@ The tool <b>adds fields</b> to the attribute table depending on which Predominan
     * <b>Mean Gap Transparency</b> (MeanGapTrans): If the predominant field meets the significance requirement, the transparency is set to 0. If not, the transparency is calculated with the following equation: ((average gap – gap)/average gap)*100)
 
 2.	If using “Over the mean + 1 standard deviation”:
-a.	1 Std Gap (OneSDGap): Calculates the average gap value plus one standard deviation of all the dominant margins.
-b.	Predominant Field within 1 Std Dev (Dom1SD): Outputs the predominant field if it meets the requirement of being over the mean gap value plus one standard deviation. If not, it outputs “No Predominance Within 1.0 Standard Deviation”.
-c.	Predominance Field Alias Over 1 SD (SD1DomAlias): Outputs the alias of the predominant field if it meets the requirement of being over the mean gap value plus one standard deviation. If not, it outputs “No Predominance Within 1.0 Standard Deviation”.
-d.	Dominance Transparency Using 1 SD (SD1DomTrans): If the predominant field meets the significance requirement, the transparency is set to 0. If not, the transparency is calculated with the following equation: ((average gap – gap)/average gap)*100)
+    * <b>1 Std Gap</b> (OneSDGap): Calculates the average gap value plus one standard deviation of all the dominant margins.
+    * <b>Predominant Field within 1 Std Dev</b> (Dom1SD): Outputs the predominant field if it meets the requirement of being over the mean gap value plus one standard deviation. If not, it outputs “No Predominance Within 1.0 Standard Deviation”.
+    * <b>Predominance Field Alias Over 1 SD</b> (SD1DomAlias): Outputs the alias of the predominant field if it meets the requirement of being over the mean gap value plus one standard deviation. If not, it outputs “No Predominance Within 1.0 Standard Deviation”.
+    * <b>Dominance Transparency Using 1 SD</b> (SD1DomTrans): If the predominant field meets the significance requirement, the transparency is set to 0. If not, the transparency is calculated with the following equation: ((average gap – gap)/average gap)*100)
 
 3.	If using “Over the mean + .5 standard deviation”:
-a.	Half Std Gap (HalfSDGap): Calculates the average gap value plus a half standard deviation of all the dominant margins.
-b.	Predominant Field within Half Std Dev (DomHalfSD): Outputs the predominant field if it meets the requirement of being over the mean gap value plus a half standard deviation. If not, it outputs “No Predominance Within 0.5 Standard Deviation”.
-c.	Predominance Field Alias Over Half SD (HalfSDDomAlias): Outputs the alias of the predominant field if it meets the requirement of being over the mean gap value plus a half standard deviation. If not, it outputs “No Predominance Within 0.5 Standard Deviation”.
-d.	Dominance Transparency Using Half SD (HalfSDDomTrans): If the predominant field meets the significance requirement, the transparency is set to 0. If not, the transparency is calculated with the following equation: ((average gap – gap)/average gap)*100)
+    * <b>Half Std Gap</b> (HalfSDGap): Calculates the average gap value plus a half standard deviation of all the dominant margins.
+    * <b>Predominant Field within Half Std Dev</b> (DomHalfSD): Outputs the predominant field if it meets the requirement of being over the mean gap value plus a half standard deviation. If not, it outputs “No Predominance Within 0.5 Standard Deviation”.
+    * <b>Predominance Field Alias Over Half SD</b> (HalfSDDomAlias): Outputs the alias of the predominant field if it meets the requirement of being over the mean gap value plus a half standard deviation. If not, it outputs “No Predominance Within 0.5 Standard Deviation”.
+    * <b>Dominance Transparency Using Half SD</b> (HalfSDDomTrans): If the predominant field meets the significance requirement, the transparency is set to 0. If not, the transparency is calculated with the following equation: ((average gap – gap)/average gap)*100)
 
 4.	If using “Over the mean + .33 standard deviation”:
-a.	Third Std Gap (ThirdSDGap): Calculates the average gap value plus a third standard deviation of all the dominant margins.
-b.	Predominant Field wihin Third Std Dev (DomThirdSD): Outputs the predominant field if it meets the requirement of being over the mean gap value plus a third standard deviation. If not, it outputs “No Predominance Within 0.33 Standard Deviation”.
-c.	Predominance Field Alias Over Third SD (ThirdSDDomAlias): Outputs the alias of the predominant field if it meets the requirement of being over the mean gap value plus a third standard deviation. If not, it outputs “No Predominance Within 0.33 Standard Deviation”.
-d.	Dominance Transparency Using Third SD (ThirdSDDomTrans): If the predominant field meets the significance requirement, the transparency is set to 0. If not, the transparency is calculated with the following equation: ((average gap – gap)/average gap)*100)
+    * <b>Third Std Gap</b> (ThirdSDGap): Calculates the average gap value plus a third standard deviation of all the dominant margins.
+    * <b>Predominant Field wihin Third Std Dev</b> (DomThirdSD): Outputs the predominant field if it meets the requirement of being over the mean gap value plus a third standard deviation. If not, it outputs “No Predominance Within 0.33 Standard Deviation”.
+    * <b>Predominance Field Alias Over Third SD</b> (ThirdSDDomAlias): Outputs the alias of the predominant field if it meets the requirement of being over the mean gap value plus a third standard deviation. If not, it outputs “No Predominance Within 0.33 Standard Deviation”.
+    * <b>Dominance Transparency Using Third SD</b> (ThirdSDDomTrans): If the predominant field meets the significance requirement, the transparency is set to 0. If not, the transparency is calculated with the following equation: ((average gap – gap)/average gap)*100)
 
 5.	If using “Over a user-specified value”:
-a.	User Specified Gap (SpecGap): Fills each row with the gap value that the user specified.
-b.	Predominant Field Over Specified Gap (DomOverSpec): Outputs the predominant field if it meets the requirement of being over the user-inputted value. If not, it outputs “No Predominance Over Specified Gap”.
-c.	Predominant Field Alias Over Specified Gap (UserDomAlias): Outputs the alias of the predominant field if it meets the requirement of being over the user-inputted value. If not, it outputs “No Predominance Over Specified Gap”.
-d.	Specified Gap Transparency Value (SpecGapTrans): If the predominant field meets the significance requirement, the transparency is set to 0. If not, the transparency is calculated with the following equation: ((average gap – gap)/average gap)*100)
+    * <b>User Specified Gap</b> (SpecGap): Fills each row with the gap value that the user specified.
+    * <b>Predominant Field Over Specified Gap</b> (DomOverSpec): Outputs the predominant field if it meets the requirement of being over the user-inputted value. If not, it outputs “No Predominance Over Specified Gap”.
+    * <b>Predominant Field Alias Over Specified Gap</b> (UserDomAlias): Outputs the alias of the predominant field if it meets the requirement of being over the user-inputted value. If not, it outputs “No Predominance Over Specified Gap”.
+    * <b>Specified Gap Transparency Value</b> (SpecGapTrans): If the predominant field meets the significance requirement, the transparency is set to 0. If not, the transparency is calculated with the following equation: ((average gap – gap)/average gap)*100)
 
 ### 3. Mapping Predominance
 
