@@ -70,7 +70,21 @@ The tool <b>adds fields</b> to the attribute table depending on which Predominan
     * <b>Predominant Field Alias Over Specified Gap</b> (UserDomAlias): Outputs the alias of the predominant field if it meets the requirement of being over the user-inputted value. If not, it outputs “No Predominance Over Specified Gap”.
     * <b>Specified Gap Transparency Value</b> (SpecGapTrans): If the predominant field meets the significance requirement, the transparency is set to 0. If not, the transparency is calculated with the following equation: ((average gap – gap)/average gap)*100)
 
-### 3. Mapping Predominance
+### 3. Implement the Tool in ArcMap
+
+The first step to using this Python script is to copy and paste the script into a Notepad. Save the document. In ArcMap, right-click on your project folder, hover over “New”, and click “Toolbox”. This creates a toolbox in your project folder. Right-click on the toolbox, hover over “Add”, and click “Script”. Follow the instructions below to create each tool:
+
+1.	<b>Calculate Gap Tool</b>: Give the script a name, label, and description and click “Next”.  
+Click on the manila folder to open the script you saved in Notepad. Click “Next”. Add two parameters “Input feature class:” (Data Type: Feature Class) and “Fields to compare:” (Data Type: Field). Click “Finish”. To use the tool, just double click on the script and follow the tool instructions. 
+ 
+ 
+
+2.	<b>Calculate Predominance Tool</b>: Give the script a name, label, and description and click “Next”.  Click on the manila folder to open the script you saved in Notepad. Click “Next”. Add four parameters “Input Feature Class:” (Data Type: Feature Class), “Predominance Option:” (String), “If user-specified gap, enter value:” (Data Type: Long), and “If Standard Deviation Interval, choose value. Default is 1:” (Double). Click “Finish”. To use the tool, just double click on the script and follow the tool instructions. 
+
+ 
+
+
+### 4. Mapping Predominance
 
 After running the <b>Calculate Gap Tool</b>and the <b>Calculate Predominance tool</b>, try mapping the predominant fields. To do this, right-click on the feature class in the Table of Contents and click on “Properties”. Go to the “Symbology” tab and click on the “Categories” section. In the Value Field, choose the field that was outputted from the Calculate Predominance tool (e.g., Predominant Field Over Mean Gap). Click “Add All Values”. Then click on the “Advanced” button to enable a transparency rule. Choose the field related to transparency (e.g., Mean Gap Transparency Value). Click “OK” to see the results on the map. 
 
