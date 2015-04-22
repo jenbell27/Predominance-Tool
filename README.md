@@ -77,12 +77,11 @@ The first step to using this Python script is to copy and paste the script into 
 1.	<b>Calculate Gap Tool</b>: Give the script a name, label, and description and click “Next”.  
 Click on the manila folder to open the script you saved in Notepad. Click “Next”. Add two parameters “Input feature class:” (Data Type: Feature Class) and “Fields to compare:” (Data Type: Field). Click “Finish”. To use the tool, just double click on the script and follow the tool instructions. 
  
- 
+ ![alt tag](https://cloud.githubusercontent.com/assets/10080810/7286047/da3f1838-e8fd-11e4-91e9-de234ae2f099.png)
 
 2.	<b>Calculate Predominance Tool</b>: Give the script a name, label, and description and click “Next”.  Click on the manila folder to open the script you saved in Notepad. Click “Next”. Add four parameters “Input Feature Class:” (Data Type: Feature Class), “Predominance Option:” (String), “If user-specified gap, enter value:” (Data Type: Long), and “If Standard Deviation Interval, choose value. Default is 1:” (Double). Click “Finish”. To use the tool, just double click on the script and follow the tool instructions. 
 
- 
-
+![alt tag](https://cloud.githubusercontent.com/assets/10080810/7286048/de1884b2-e8fd-11e4-892e-3b31976c0b72.png)
 
 ### 4. Mapping Predominance
 
