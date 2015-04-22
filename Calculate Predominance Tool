@@ -1,0 +1,182 @@
+#-------------------------------------------------------------------------------
+# Name:        module1
+# Purpose:
+#
+# Author:      jenn0003
+#
+# Created:     07/10/2014
+# Copyright:   (c) jenn0003 2014
+# Licence:     <your licence>
+#-------------------------------------------------------------------------------
+
+###Import required modules
+import sys, os, string, arcpy, numpy, math
+
+if __name__ == "__main__":
+    try:
+        from arcpy import env
+
+        #Tool Interface
+        featureClass = arcpy.GetParameterAsText(0)
+        gapType = arcpy.GetParameterAsText(1)
+        gap = arcpy.GetParameter(2) #Will be ignored if not user-specified
+        Std = arcpy.GetParameterAsText(3)
+
+        #Hard Coded for Testing
+        if featureClass == '':
+            featureClass = r"\\jbelldt7\2014\Predominance\MPI_LB_Test.gdb\US_Dept_State_WorldCountries_1"
+        if gapType == '':
+            gapType = 'OVER_MEAN' #OVER_STD or USER_SPEC
+        if gap == '':
+            userGap = 1
+        if Std == '':
+            StdInterval = 1
+        #User inputs either Mean Gap, Mean + 1SD Gap, or Custom Gap
+
+        #Fields created from Tool #1 required for this tool's calculations
+        gapField = "DomMarg"
+        gapPercent = 'DomPerc'
+        domAlias = 'DomFAlias'
+
+        # Set environment settings
+        env.overwriteOutput = True
+
+        if gapType == 'OVER_MEAN':
+            arcpy.AddField_management(featureClass,"MeanGap","DOUBLE","","","","Mean Gap") # Add Mean Gap
+            arcpy.AddField_management(featureClass,"DomOverMean","TEXT","","",64,"Predominant Field Over Mean Gap") # Specifies if it is over the mean
+            arcpy.AddField_management(featureClass,"MeanDomAlias","TEXT","","",100,"Predominant Field Alias Over Mean Gap")
+            arcpy.AddField_management(featureClass,"MeanGapTrans","DOUBLE","","","","Mean Gap Transparency Value")
+
+            #calculate mean
+            na = arcpy.da.TableToNumPyArray(featureClass,gapField)
+            mean = numpy.mean(na[gapField])  #arcpy.Statistics_analysis(featureClass,featureClass,[["DomMarg","MEAN"]])
+            arcpy.CalculateField_management(featureClass,"MeanGap",mean)
+
+            fields = (gapField , 'DomFName' , 'DomOverMean' , domAlias , 'MeanDomAlias' , 'MeanGapTrans')
+            with arcpy.da.UpdateCursor(featureClass,fields) as cursor:
+                for row in cursor:
+                    if row[0] >= mean:
+                        row[2] = row[1]
+                        row[4] = row[3]
+                        row[5] = 0
+
+                    else:
+                        row[2] = "No Predominance Over Mean"
+                        row[4] = "No Predominance Over Mean"
+                        row[5] = ((mean - row[0])/mean)*100
+                    cursor.updateRow(row)
+
+        if gapType == "OVER_STD":
+            StdInterval = float(Std)
+            Alias = ""
+            PredomAlias = ""
+            if Std == '1':
+                fieldName = "OneSDGap"
+                Alias = "1 Std Gap"
+                DomFieldName = "Dom1SD"
+                PredomAlias = "Predominant Field within 1 Std Dev"
+                aliasFieldName = "SD1DomAlias"
+                aliasFieldAlias = "Predominance Field Alias Over 1 SD"
+                transFieldName = "SD1DomTrans"
+                transAliasName = "Dominance Transparency Using 1 SD"
+
+            if Std == '0.5':
+                fieldName = "HalfSDGap"
+                Alias = "Half Std Gap"
+                DomFieldName = "DomHalfSD"
+                PredomAlias = "Predominant Field within Half Std Dev"
+                aliasFieldName = "HalfSDDomAlias"
+                aliasFieldAlias = "Predominance Field Alias Over Half SD"
+                transFieldName = "HalfSDDomTrans"
+                transAliasName = "Dominance Transparency Using Half SD"
+
+            if Std == '0.33':
+                fieldName = "ThirdSDGap"
+                Alias = "Third Std Gap"
+                DomFieldName = "DomThirdSD"
+                PredomAlias = "Predominant Field within Third Std Dev"
+                aliasFieldName = "ThirdSDDomAlias"
+                aliasFieldAlias = "Predominance Field Alias Over Third SD"
+                transFieldName = "ThirdSDDomTrans"
+                transAliasName = "Dominance Transparency Using Third SD"
+
+            #StdInterval = float(Std)
+            arcpy.AddField_management(featureClass,fieldName,"DOUBLE","","","",Alias)
+            arcpy.AddField_management(featureClass,DomFieldName,"TEXT","","",64,PredomAlias)
+            arcpy.AddField_management(featureClass,aliasFieldName,"TEXT","","",100,aliasFieldAlias)
+            arcpy.AddField_management(featureClass,transFieldName,"DOUBLE","","","",transAliasName)
+
+            na = arcpy.da.TableToNumPyArray(featureClass,gapField)
+            mean = numpy.mean(na[gapField]) #arcpy.Statistics_analysis(featureClass,featureClass,[["DomMarg","MEAN"]])
+            rawSD = numpy.std(na[gapField])
+            SD = rawSD * StdInterval
+            MeanSDGap = mean + SD
+            arcpy.CalculateField_management(featureClass,fieldName,MeanSDGap)
+
+            fields = (gapField , 'DomFName' , DomFieldName , domAlias , aliasFieldName , transFieldName)
+            with arcpy.da.UpdateCursor(featureClass,fields) as cursor:
+                for row in cursor:
+                    if row[0] >= MeanSDGap:
+                        row[2] = row[1]
+                        row[4] = row[3]
+                        row[5] = 0
+
+                    else:
+                        row[2] = "No Predominance Within " + str(StdInterval) + " Standard Deviation"
+                        row[4] = "No Predominance Within " + str(StdInterval) + " Standard Deviation"
+                        row[5] = (((MeanSDGap - row[0])/MeanSDGap)*100)
+
+                    cursor.updateRow(row)
+
+
+        if gapType == "USER_SPEC":
+            if gap == '':
+                print 'error with user gap' #arcpy error??
+            else:
+                userGap = float(gap)
+
+            arcpy.AddField_management(featureClass,"SpecGap","DOUBLE","","","","User Specified Gap")
+            arcpy.AddField_management(featureClass,"DomOverSpec","TEXT","","",64,"Predominant Field Over Specified Gap")
+            arcpy.AddField_management(featureClass,"UserDomAlias","TEXT","","",100,"Predominant Field Alias Over Specified Gap")
+            arcpy.AddField_management(featureClass,"SpecGapTrans","DOUBLE","","","","Specified Gap Transparency Value")
+            arcpy.CalculateField_management(featureClass,"SpecGap",userGap)
+
+            fields = (gapPercent , "DomFName" , "DomOverSpec"  , domAlias , "UserDomAlias" , "SpecGapTrans")
+            with arcpy.da.UpdateCursor(featureClass,fields) as cursor:
+                for row in cursor:
+                    if row[0] >= userGap:
+                        row[2] = row[1]
+                        row[4] = row[3]
+                        row[5] = row[0] - userGap
+
+                    else:
+                        row[2] = "No Predominance Over Specified Gap"
+                        row[4] = "No Predominance Over Specified Gap"
+                        row[5] = userGap - row[0]
+
+                    cursor.updateRow(row)
+
+
+        # Fill Mean + 1SD Gap
+        #na = arcpy.da.TableToNumPyArray(featureClass,gapField)
+        #mean = numpy.mean(na[gapField]) #arcpy.Statistics_analysis(featureClass,featureClass,[["DomMarg","MEAN"]])
+        #SD = arcpy.Statistics_analysis(featureClass,featureClass,[["DomMarg","STD"]])
+        #print SD
+        #MeanSDGap = MeanGap + SD
+        #expression = ''
+        #arcpy.CalculateField_management(featureClass,"MeanSDGap",MeanSDGap)
+
+        # Clean up
+        rows = ""
+        row = ""
+        Crow = ""
+        Crows = ""
+        print "Done"
+        del cursor
+
+    except Exception, ErrorDesc:
+        # If an error set output boolean parameter "Error" to True.
+        print ErrorDesc
+        arcpy.AddError(str(ErrorDesc))
+        row = None
+        rows = None
