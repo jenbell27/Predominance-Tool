@@ -72,7 +72,7 @@ The tool <b>adds fields</b> to the attribute table depending on which Predominan
 
 ### 3. Implement the Tool in ArcMap
 
-The first step to using this Python script is to copy and paste the script into a Notepad. Save the document. In ArcMap, right-click on your project folder, hover over “New”, and click “Toolbox”. This creates a toolbox in your project folder. Right-click on the toolbox, hover over “Add”, and click “Script”. Follow the instructions below to create each tool:
+The first step to using this Python script is to copy and paste the script into a Notepad. Save the document. In ArcMap, right-click on your project folder, hover over “New”, and click “Toolbox”. This creates a toolbox in your project folder. Right-click on the toolbox, hover over “Add”, and click “Script”. Follow the instructions below to create each tool (go to <b><a href="http://resources.arcgis.com/en/help/main/10.2/index.html#//00150000001r000000" target="_blank">ArcGIS Help</a></b> for more information on how to add scripts in ArcMap):
 
 1.	<b>Calculate Gap Tool</b>: Give the script a name, label, and description and click “Next”.  
 Click on the manila folder to open the script you saved in Notepad. Click “Next”. Add two parameters “Input feature class:” (Data Type: Feature Class) and “Fields to compare:” (Data Type: Field). Click “Finish”. To use the tool, just double click on the script and follow the tool instructions. 
@@ -87,7 +87,9 @@ Click on the manila folder to open the script you saved in Notepad. Click “Nex
 
 After running the <b>Calculate Gap Tool</b>and the <b>Calculate Predominance tool</b>, try mapping the predominant fields. To do this, right-click on the feature class in the Table of Contents and click on “Properties”. Go to the “Symbology” tab and click on the “Categories” section. In the Value Field, choose the field that was outputted from the Calculate Predominance tool (e.g., Predominant Field Over Mean Gap). Click “Add All Values”. Then click on the “Advanced” button to enable a transparency rule. Choose the field related to transparency (e.g., Mean Gap Transparency Value). Click “OK” to see the results on the map. 
 
-This type of predominance mapping is beneficial in showing <i>how</i> much more dominant one area is when compared to another. The solid areas (with less transparency) have a greater predominance gap than areas that are more transparent. One example of this type of mapping can be found in this <b>[predominant race map](http://urbanobservatory.maps.arcgis.com/home/webmap/viewer.html?layers=0fd7dc7c53c34b03ab4475d895b5d32f&useExisting=1 "Predominant Population Map")</b>. 
+This type of predominance mapping is beneficial in showing <i>how</i> much more dominant one area is when compared to another. The solid areas (with less transparency) have a greater predominance gap than areas that are more transparent. One example of this type of mapping can be found in this <b><a href="http://urbanobservatory.maps.arcgis.com/home/webmap/viewer.html?layers=0fd7dc7c53c34b03ab4475d895b5d32f&useExisting=1" target="_blank">predominant race map</a></b>.
+
+
 
 
 
